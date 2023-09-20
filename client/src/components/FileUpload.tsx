@@ -3,21 +3,49 @@ import { Inbox } from "lucide-react";
 import React from "react";
 import { useDropzone } from "react-dropzone";
 import { useToast } from "@/components/ui/use-toast";
+import { uploadToS3 } from "@/lib/s3";
+import { getErrorMessage } from "@/lib/utils";
+import { ToastAction } from "@/components/ui/toast";
 
 const FileUpload = () => {
   const { toast } = useToast();
   const { getRootProps, getInputProps } = useDropzone({
     accept: { "application/pdf": [".pdf"] },
     maxFiles: 1,
-    onDrop: (acceptedFiles) => {
+    onDrop: async (acceptedFiles) => {
       console.log(acceptedFiles);
       const file = acceptedFiles[0];
       if (file.size > 10 * 1024 * 1024) {
         // bigger than 10MB
         toast({
           variant: "destructive",
-          title: "Uh oh! File too big",
+          title: "Oops! File is too big.",
           description: "Please upload a file smaller than 10MB",
+        });
+        return;
+      }
+
+      try {
+        const data = await uploadToS3(file);
+        if (!data) {
+          toast({
+            variant: "destructive",
+            title: "Uh oh! Something went wrong.",
+            description: "The file you uploaded contains no data.",
+            action: <ToastAction altText="Try again">Try again</ToastAction>,
+          });
+        } else {
+          toast({
+            variant: "default",
+            title: "Successfully uploaded file:",
+            description: `${data.file_name}`,
+          });
+        }
+      } catch (error: unknown) {
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: getErrorMessage(error),
         });
       }
     },
