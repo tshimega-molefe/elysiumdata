@@ -9,13 +9,16 @@ export default async function Home() {
   const isAuthenticated = !!userId;
   return (
     <div className="w-screen min-h-screen bg-primary">
+      <nav className=" container fixed top-0 left-0 w-full h-20 flex flex-row items-center justify-between z-50">
+        <h1 className="font-semibold capitalize text-3xl">Elysium</h1>
+        <UserButton afterSignOutUrl="/" />
+      </nav>
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
         <div className="flex flex-col items-center text-center max-sm:gap-6 sm:gap-10">
           <div className="flex items-center">
             <h1 className="mr-3 md:text-5xl text-xl font-semibold">
-              Analyse financial data
+              Analyse Financial Data
             </h1>
-            <UserButton afterSignOutUrl="/" />
           </div>
 
           <div className="flex mt-2">
