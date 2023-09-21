@@ -1,6 +1,11 @@
-import { Pinecone, PineconeRecord } from "@pinecone-database/pinecone";
+import {
+  PineconeClient,
+  Vector,
+  utils as PineconeUtils,
+} from "@pinecone-database/pinecone";
 import { downloadFromS3 } from "@/lib/s3-server";
 import { PDFLoader } from "langchain/document_loaders/fs/pdf";
+
 import {
   Document,
   RecursiveCharacterTextSplitter,
@@ -10,11 +15,12 @@ import { toast } from "@/components/ui/use-toast";
 import { convertToAscii, getErrorMessage } from "@/lib/utils";
 import md5 from "md5";
 
-let pinecone: Pinecone | null = null;
+let pinecone: PineconeClient | null = null;
 
 export const getPineconeClient = async () => {
   if (!pinecone) {
-    pinecone = new Pinecone({
+    pinecone = new PineconeClient();
+    await pinecone.init({
       environment: process.env.PINECONE_ENVIRONMENT!,
       apiKey: process.env.PINECONE_API_KEY!,
     });
@@ -48,12 +54,11 @@ export async function loadS3IntoPinecone(fileKey: string) {
 
   // 4. upload to pinecone
   const client = await getPineconeClient();
-  const pineconeIndex = await client.index("elysium");
-  const namespace = pineconeIndex.namespace(convertToAscii(fileKey));
+  const pineconeIndex = client.Index("elysium");
 
   console.log("DEBUG: Inserting vectors into pinecone");
-  await namespace.upsert(vectors);
-
+  const namespace = convertToAscii(fileKey);
+  PineconeUtils.chunkedUpsert(pineconeIndex, vectors, namespace, 10);
   return documents[0];
 }
 
@@ -69,7 +74,7 @@ async function embedDocument(doc: Document) {
         text: doc.metadata.text,
         pageNumber: doc.metadata.pageNumber,
       },
-    } as PineconeRecord;
+    } as Vector;
   } catch (error) {
     const errorMessage = getErrorMessage(error);
     console.log("DEBUG: Error embedding document", error);
