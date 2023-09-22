@@ -13,7 +13,7 @@ const config = new Configuration({
 });
 const openai = new OpenAIApi(config);
 
-export async function POST(req: Request) {
+export async function POST(req: Request): Promise<Response> {
   try {
     const { messages, chatId } = await req.json();
     const _chats = await db.select().from(chats).where(eq(chats.id, chatId));
@@ -68,6 +68,11 @@ export async function POST(req: Request) {
         });
       },
     });
-    return new StreamingTextResponse(stream);
-  } catch (error) {}
+    return new StreamingTextResponse(stream) as unknown as Response;
+  } catch (error) {
+    return new Response(
+      JSON.stringify({ error: "An unexpected error occurred" }),
+      { status: 500 }
+    );
+  }
 }
