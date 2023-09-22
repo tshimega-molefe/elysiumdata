@@ -8,7 +8,7 @@ export default async function Home() {
   const { userId } = await auth();
   const isAuthenticated = !!userId;
   return (
-    <div className="w-screen min-h-screen bg-background">
+    <div className="w-screen h-screen bg-background">
       <nav className="container fixed inset-0 w-screen h-20 flex flex-row items-center justify-between z-50">
         <h1 className="font-semibold capitalize text-3xl">Elysium</h1>
         <UserButton afterSignOutUrl="/" />

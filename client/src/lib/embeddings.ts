@@ -1,6 +1,4 @@
 import { OpenAIApi, Configuration } from "openai-edge";
-import { getErrorMessage } from "@/lib/utils";
-import { toast } from "@/components/ui/use-toast";
 
 const config = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
@@ -15,15 +13,20 @@ export async function getEmbeddings(text: string) {
       input: text.replace(/\n/g, " "),
     });
     const result = await response.json();
+    console.log("OpenAI API Result: ", result);
+
+    if (
+      !result ||
+      !result.data ||
+      !result.data[0] ||
+      !result.data[0].embedding
+    ) {
+      throw new Error("Invalid OpenAI API response format.");
+    }
+
     return result.data[0].embedding as number[];
-  } catch (error: unknown) {
-    const errorMessage = getErrorMessage(error);
-    console.log("DEBUG: Error calling openai embeddings api", errorMessage);
-    toast({
-      variant: "destructive",
-      title: "Uh oh! Something went wrong.",
-      description: `${errorMessage}`,
-    });
+  } catch (error) {
+    console.log("error calling openai embeddings api", error);
     throw error;
   }
 }

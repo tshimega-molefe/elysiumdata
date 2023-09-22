@@ -44,8 +44,12 @@ const ChatSideBar = ({ chats, chatId }: Props) => {
 
       <div className="absolute bottom-4 left-4">
         <div className="flex items-center gap-2 text-sm text-muted flex-wrap">
-          <Link href="/">Home</Link>
-          <Link href="/">Docs</Link>
+          <Link href="/" className="hover:text-primary">
+            Home
+          </Link>
+          <Link href="/" className="hover:text-primary">
+            Docs
+          </Link>
         </div>
       </div>
     </div>
