@@ -6,13 +6,15 @@ import { cn } from "@/lib/utils";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { MessageCircle, PlusCircle } from "lucide-react";
+import SubscriptionButton from "./SubscriptionButton";
 
 type Props = {
   chats: DrizzleChat[];
   chatId: number;
+  isPro: boolean;
 };
 
-const ChatSideBar = ({ chats, chatId }: Props) => {
+const ChatSideBar = ({ chats, chatId, isPro }: Props) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   return (
     <div className="w-full h-screen p-4 text-muted bg-secondary-foreground">
@@ -51,6 +53,7 @@ const ChatSideBar = ({ chats, chatId }: Props) => {
             Docs
           </Link>
         </div>
+        <SubscriptionButton isPro={isPro} />
       </div>
     </div>
   );

@@ -1,12 +1,25 @@
 import FileUpload from "@/components/FileUpload";
+import SubscriptionButton from "@/components/SubscriptionButton";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { db } from "@/lib/db";
+import { chats } from "@/lib/db/schema";
+import { checkSubscription } from "@/lib/subscription";
 import { UserButton, auth } from "@clerk/nextjs";
-import { LogIn } from "lucide-react";
+import { eq } from "drizzle-orm";
+import { ArrowRight, FolderOpen, LogIn } from "lucide-react";
 import Link from "next/link";
 
 export default async function Home() {
   const { userId } = await auth();
   const isAuthenticated = !!userId;
+  const isPro = await checkSubscription();
+  let firstChat;
+  if (userId) {
+    firstChat = await db.select().from(chats).where(eq(chats.userId, userId));
+  }
+  if (firstChat) {
+    firstChat = firstChat[0];
+  }
   return (
     <div className="w-screen h-screen bg-background">
       <nav className="container fixed inset-0 w-screen h-20 flex flex-row items-center justify-between z-50">
@@ -20,19 +33,21 @@ export default async function Home() {
               Analyse Financial Data
             </h1>
           </div>
-          {isAuthenticated && (
-            <div className="flex mt-2">
+          <div className="flex flex-row gap-4 mt-2">
+            {isAuthenticated && firstChat && (
               <Link
-                href="/chat/11"
+                href={`/chat/${firstChat.id}`}
                 className={`${buttonVariants({
                   variant: "default",
                   size: "lg",
                 })} active:scale-95 transition-transform duration-75`}
               >
-                Go to your reports
+                View your reports <FolderOpen className="ml-2 w-4 h-4" />
               </Link>
-            </div>
-          )}
+            )}
+
+            <SubscriptionButton isPro={isPro} />
+          </div>
 
           <p className="max-w-xl mt-1 md:text-lg text-sm text-muted-foreground">
             Instantly review reports, financial statements, and generate
