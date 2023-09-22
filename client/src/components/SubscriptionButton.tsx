@@ -23,10 +23,9 @@ const SubscriptionButton = (props: Props) => {
       disabled={loading}
       onClick={handleSubscription}
       variant="outline"
-      size="lg"
       className="active:scale-95 transition-transform duration-75 text-secondary-foreground"
     >
-      {props.isPro ? "Manage Subscriptions" : "Premium Free Trial"}
+      {props.isPro ? "Manage Subscriptions" : "Get Pro"}
     </Button>
   );
 };
