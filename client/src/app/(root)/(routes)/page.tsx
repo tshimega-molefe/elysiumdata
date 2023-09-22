@@ -27,7 +27,7 @@ export default async function Home() {
                 className={`${buttonVariants({
                   variant: "default",
                   size: "lg",
-                })}`}
+                })} active:scale-95 transition-transform duration-75`}
               >
                 Go to your reports
               </Link>
