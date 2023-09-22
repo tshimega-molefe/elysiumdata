@@ -1,5 +1,5 @@
 import FileUpload from "@/components/FileUpload";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { UserButton, auth } from "@clerk/nextjs";
 import { LogIn } from "lucide-react";
 import Link from "next/link";
@@ -22,9 +22,15 @@ export default async function Home() {
           </div>
           {isAuthenticated && (
             <div className="flex mt-2">
-              <Button variant="default" size="lg">
+              <Link
+                href="/chat/11"
+                className={`${buttonVariants({
+                  variant: "default",
+                  size: "lg",
+                })}`}
+              >
                 Go to your reports
-              </Button>
+              </Link>
             </div>
           )}
 

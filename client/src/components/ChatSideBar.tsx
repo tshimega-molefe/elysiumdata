@@ -29,7 +29,8 @@ const ChatSideBar = ({ chats, chatId }: Props) => {
             <div
               className={cn("rounded-lg p-3 text-slate-300 flex items-center", {
                 "bg-primary text-primary-foreground": chat.id === chatId,
-                "hover:text-secondary": chat.id !== chatId,
+                "hover:text-secondary active:scale-95 transition-transform duration-75":
+                  chat.id !== chatId,
               })}
             >
               <MessageCircle className="mr-2" />
@@ -39,6 +40,13 @@ const ChatSideBar = ({ chats, chatId }: Props) => {
             </div>
           </Link>
         ))}
+      </div>
+
+      <div className="absolute bottom-4 left-4">
+        <div className="flex items-center gap-2 text-sm text-muted flex-wrap">
+          <Link href="/">Home</Link>
+          <Link href="/">Docs</Link>
+        </div>
       </div>
     </div>
   );
