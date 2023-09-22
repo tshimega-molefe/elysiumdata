@@ -9,8 +9,10 @@ import { ToastAction } from "@/components/ui/toast";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const FileUpload = () => {
+  const router = useRouter();
   const [uploading, setUploading] = useState<boolean>(false);
   const { mutate, isLoading } = useMutation({
     mutationFn: async ({
@@ -56,12 +58,13 @@ const FileUpload = () => {
           return;
         }
         mutate(data, {
-          onSuccess: (data) => {
+          onSuccess: ({ chat_id }) => {
             toast({
               variant: "default",
-              title: `${data.message}`,
+              title: `Chat created!`,
               description: `Elysium is ready to analyse your document!`,
             });
+            router.push(`/chat/${chat_id}`);
           },
           onError: (error) => {
             toast({
